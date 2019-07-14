@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:trip/dao/home_dao.dart';
+import 'package:trip/model/home_model.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,6 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
+  String resultString = '';
   List _imageUrls = [
     'https://pic.c-ctrip.com/platform/h5/home/baodi2@v7.15.jpg',
     'https://pic.c-ctrip.com/platform/h5/home/baodi2@v7.15.jpg',
@@ -18,6 +22,26 @@ class _HomePage extends State<HomePage> {
 
   _onScroll(offset) {
     toggleAppBarDisplay(offset);
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    try {
+      HomeModel model = await HomeDao.fetch();
+      setState(() {
+        resultString = json.encode(model);
+      });
+    } catch (e) {
+      setState(() {
+        resultString = e.toString();
+      });
+    }
   }
 
   void toggleAppBarDisplay(offset) {
@@ -66,7 +90,7 @@ class _HomePage extends State<HomePage> {
                       Container(
                         height: 800,
                         child: ListTile(
-                          title: Text("sss12ss"),
+                          title: Text(resultString),
                         ),
                       )
                     ],
