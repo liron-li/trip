@@ -4,6 +4,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:trip/dao/home_dao.dart';
 import 'package:trip/model/home_model.dart';
 import 'package:trip/widget/grid_nav.dart';
+import 'package:trip/widget/loading_container.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class _HomePage extends State<HomePage> {
 
   double appBarAlpha = 0;
   double maxAppbarScrollOffset = 100;
+  bool isLoading = true;
 
   _onScroll(offset) {
     toggleAppBarDisplay(offset);
@@ -36,6 +38,7 @@ class _HomePage extends State<HomePage> {
       HomeModel model = await HomeDao.fetch();
       setState(() {
         resultString = json.encode(model);
+        isLoading = false;
       });
     } catch (e) {
       setState(() {
@@ -62,7 +65,7 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: LoadingContainerWidget(child: Stack(
         children: <Widget>[
           MediaQuery.removePadding(
               removeTop: true,
@@ -113,7 +116,7 @@ class _HomePage extends State<HomePage> {
             ),
           )
         ],
-      ),
+      ), isLoading: isLoading),
     );
   }
 }
