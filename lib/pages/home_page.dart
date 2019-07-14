@@ -5,6 +5,7 @@ import 'package:trip/dao/home_dao.dart';
 import 'package:trip/model/home_model.dart';
 import 'package:trip/widget/grid_nav.dart';
 import 'package:trip/widget/loading_container.dart';
+import 'package:trip/widget/local_nav.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +21,7 @@ class _HomePage extends State<HomePage> {
   ];
 
   List<BannerList> bannerList = [];
+  List<LocalNavList> localNavList = [];
 
   double appBarAlpha = 0;
   double maxAppbarScrollOffset = 100;
@@ -40,6 +42,7 @@ class _HomePage extends State<HomePage> {
       HomeModel model = await HomeDao.fetch();
       setState(() {
         bannerList = model.bannerList;
+        localNavList = model.localNavList;
         isLoading = false;
       });
     } catch (e) {
@@ -60,11 +63,10 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f2),
       body: LoadingContainerWidget(child: Stack(
         children: <Widget>[
           MediaQuery.removePadding(
@@ -79,19 +81,10 @@ class _HomePage extends State<HomePage> {
                   },
                   child: ListView(
                     children: <Widget>[
-                      Container(
-                        height: 160,
-                        child: Swiper(
-                          itemCount: bannerList.length,
-                          autoplay: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Image.network(
-                              bannerList[index].icon,
-                              fit: BoxFit.fill,
-                            );
-                          },
-                          pagination: new SwiperPagination(),
-                        ),
+                      _banner,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(7, 4, 4, 7),
+                        child: LocalNavWidget(localNavList: localNavList),
                       ),
                       GridNavWidget(),
                       Container(
@@ -102,21 +95,42 @@ class _HomePage extends State<HomePage> {
                       )
                     ],
                   )), onRefresh: _onRefresh)),
-          Opacity(
-            opacity: appBarAlpha,
-            child: Container(
-              height: 80,
-              decoration: BoxDecoration(color: Colors.white),
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text('首页'),
-                ),
-              ),
-            ),
-          )
+          _appBar
         ],
       ), isLoading: isLoading),
+    );
+  }
+
+  Widget get _banner {
+    return Container(
+      height: 160,
+      child: Swiper(
+        itemCount: bannerList.length,
+        autoplay: true,
+        itemBuilder: (BuildContext context, int index) {
+          return Image.network(
+            bannerList[index].icon,
+            fit: BoxFit.fill,
+          );
+        },
+        pagination: new SwiperPagination(),
+      ),
+    );
+  }
+
+  Widget get _appBar {
+    return Opacity(
+      opacity: appBarAlpha,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(color: Colors.white),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: Text('首页'),
+          ),
+        ),
+      ),
     );
   }
 }

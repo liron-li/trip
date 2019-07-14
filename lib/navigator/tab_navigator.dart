@@ -13,7 +13,7 @@ class _TabNavigator extends State<TabNavigator> {
 
   final _defaultColor = Colors.grey;
   final _activeColor = Colors.blue;
-  int _currentIndex = 1;
+  int _currentIndex = 0;
 
   final PageController _controller = PageController(
     initialPage: 0
