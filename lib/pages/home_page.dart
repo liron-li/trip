@@ -19,6 +19,8 @@ class _HomePage extends State<HomePage> {
     'https://pic.c-ctrip.com/platform/h5/home/baodi2@v7.15.jpg'
   ];
 
+  List<BannerList> bannerList = [];
+
   double appBarAlpha = 0;
   double maxAppbarScrollOffset = 100;
   bool isLoading = true;
@@ -37,13 +39,11 @@ class _HomePage extends State<HomePage> {
     try {
       HomeModel model = await HomeDao.fetch();
       setState(() {
-        resultString = json.encode(model);
+        bannerList = model.bannerList;
         isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        resultString = e.toString();
-      });
+
     }
     return null;
   }
@@ -82,11 +82,11 @@ class _HomePage extends State<HomePage> {
                       Container(
                         height: 160,
                         child: Swiper(
-                          itemCount: _imageUrls.length,
+                          itemCount: bannerList.length,
                           autoplay: true,
                           itemBuilder: (BuildContext context, int index) {
                             return Image.network(
-                              _imageUrls[index],
+                              bannerList[index].icon,
                               fit: BoxFit.fill,
                             );
                           },
@@ -97,7 +97,7 @@ class _HomePage extends State<HomePage> {
                       Container(
                         height: 800,
                         child: ListTile(
-                          title: Text(resultString),
+                          title: Text('aaa'),
                         ),
                       )
                     ],
