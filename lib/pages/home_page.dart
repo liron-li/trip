@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:trip/dao/home_dao.dart';
 import 'package:trip/model/home_model.dart';
+import 'package:trip/widget/grid_nav.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,14 +25,13 @@ class _HomePage extends State<HomePage> {
     toggleAppBarDisplay(offset);
   }
 
-
   @override
   void initState() {
     super.initState();
-    loadData();
+    _onRefresh();
   }
 
-  loadData() async {
+  Future<Null> _onRefresh() async {
     try {
       HomeModel model = await HomeDao.fetch();
       setState(() {
@@ -42,6 +42,7 @@ class _HomePage extends State<HomePage> {
         resultString = e.toString();
       });
     }
+    return null;
   }
 
   void toggleAppBarDisplay(offset) {
@@ -56,6 +57,8 @@ class _HomePage extends State<HomePage> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +67,7 @@ class _HomePage extends State<HomePage> {
           MediaQuery.removePadding(
               removeTop: true,
               context: context,
-              child: NotificationListener(
+              child: RefreshIndicator(child: NotificationListener(
                   onNotification: (scrollNotification) {
                     if (scrollNotification is ScrollUpdateNotification &&
                         scrollNotification.depth == 0) {
@@ -87,6 +90,7 @@ class _HomePage extends State<HomePage> {
                           pagination: new SwiperPagination(),
                         ),
                       ),
+                      GridNavWidget(),
                       Container(
                         height: 800,
                         child: ListTile(
@@ -94,7 +98,7 @@ class _HomePage extends State<HomePage> {
                         ),
                       )
                     ],
-                  ))),
+                  )), onRefresh: _onRefresh)),
           Opacity(
             opacity: appBarAlpha,
             child: Container(
